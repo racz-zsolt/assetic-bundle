@@ -52,7 +52,7 @@ class AsseticExtension extends BaseAsseticExtension
         );
     }
 
-    public function getGlobals()
+    public function getGlobals(): array
     {
         $globals = parent::getGlobals();
         $globals['assetic']['use_controller'] = $this->useController;
