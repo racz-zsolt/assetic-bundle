@@ -71,7 +71,7 @@ class TemplateResourcesPass implements CompilerPassInterface
         }
         $engines = [];
 
-        if ($container->hasParameter('twig')) {
+        if ($container->has('twig')) {
             $engines[] = 'twig';
         }
 
