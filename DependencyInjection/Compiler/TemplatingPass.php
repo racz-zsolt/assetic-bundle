@@ -27,7 +27,7 @@ class TemplatingPass implements CompilerPassInterface
             return;
         }
 
-        $engines = $container->getParameterBag()->resolveValue($container->getParameter('templating.engines'));
+        $engines = $this->getEngines($container);
 
         if (!in_array('twig', $engines)) {
             foreach ($container->findTaggedServiceIds('assetic.templating.twig') as $id => $attr) {
@@ -40,5 +40,18 @@ class TemplatingPass implements CompilerPassInterface
                 $container->removeDefinition($id);
             }
         }
+    }
+
+    private function getEngines(ContainerBuilder $container) {
+        if ($container->hasParameter('templating.engines')) {
+            return $container->getParameterBag()->resolveValue($container->getParameter('templating.engines'));
+        }
+        $engines = [];
+
+        if ($container->hasParameter('twig')) {
+            $engines[] = 'twig';
+        }
+
+        return $engines;
     }
 }

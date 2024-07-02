@@ -29,7 +29,7 @@ class TemplateResourcesPass implements CompilerPassInterface
             return;
         }
 
-        $engines = $container->getParameter('templating.engines');
+        $engines = $this->getEngines($container);
 
         // bundle and kernel resources
         $bundles = $container->getParameter('kernel.bundles');
@@ -51,7 +51,7 @@ class TemplateResourcesPass implements CompilerPassInterface
         $container->setDefinition(
             'assetic.'.$engine.'_directory_resource.'.$bundleName,
             new DirectoryResourceDefinition($bundleName, $engine, array(
-                $container->getParameter('kernel.root_dir').'/Resources/'.$bundleName.'/views',
+                $container->getParameter('kernel.project_dir').'/app/Resources/'.$bundleName.'/views',
                 $bundleDirName.'/Resources/views',
             ))
         );
@@ -61,7 +61,20 @@ class TemplateResourcesPass implements CompilerPassInterface
     {
         $container->setDefinition(
             'assetic.'.$engine.'_directory_resource.kernel',
-            new DirectoryResourceDefinition('', $engine, array($container->getParameter('kernel.root_dir').'/Resources/views'))
+            new DirectoryResourceDefinition('', $engine, array($container->getParameter('kernel.project_dir').'/app/Resources/views'))
         );
+    }
+
+    private function getEngines(ContainerBuilder $container) {
+        if ($container->hasParameter('templating.engines')) {
+            return $container->getParameterBag()->resolveValue($container->getParameter('templating.engines'));
+        }
+        $engines = [];
+
+        if ($container->hasParameter('twig')) {
+            $engines[] = 'twig';
+        }
+
+        return $engines;
     }
 }
